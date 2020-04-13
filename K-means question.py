@@ -53,7 +53,6 @@ if __name__ == "__main__":
 	# 	plt.matshow(centroids[i].reshape((8, 8)))
 	# 	plt.show()
 
-
 	wcss = []
 	for i in range(1, 16):
 		labels, centroids, error = k_means(digits.data, i)
