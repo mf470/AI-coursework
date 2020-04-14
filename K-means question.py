@@ -1,5 +1,4 @@
 from sklearn.datasets import load_digits
-from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
@@ -8,9 +7,9 @@ from numpy.linalg import norm
 def computeNorm(dataset, centroids):
 	"""
 	Computes the distance from each element in the dataset to each centroid
-	:param dataset:
-	:param centroids:
-	:return:
+	:param dataset: (ndarray) Dataset being clustered
+	:param centroids: (ndarray) List of centroids
+	:return: (ndarray) List of distance of each element in the dataset to each centroid
 	"""
 	distance = np.zeros((dataset.shape[0], len(centroids)))
 	for i in range(len(centroids)):
@@ -21,10 +20,10 @@ def computeNorm(dataset, centroids):
 
 def setClusters(dataset, centroids):
 	"""
-
-	:param dataset:
-	:param centroids:
-	:return:
+	Finds which centroid each element in the dataset is closest to
+	:param dataset: (ndarray) Dataset being clustered
+	:param centroids: (ndarray) List of centroids
+	:return: (ndarray) List of labels of which centroid each element is closest to
 	"""
 	norm = computeNorm(dataset, centroids)
 	return np.argmin(norm, axis=1)
@@ -32,11 +31,11 @@ def setClusters(dataset, centroids):
 
 def setCetroids(dataset, labels, k):
 	"""
-
-	:param dataset:
-	:param labels:
-	:param k:
-	:return:
+	Calculates the centroids for each cluster
+	:param dataset: (ndarray) Dataset being clustered
+	:param labels: (ndarray) List assigning each element to a cluster
+	:param k: (int) The number of clusters
+	:return: (ndarray) Centroids
 	"""
 	centroids = np.zeros((k, dataset.shape[1]))
 	for i in range(k):
@@ -46,11 +45,11 @@ def setCetroids(dataset, labels, k):
 
 def calcError(dataset, labels, centroids):
 	"""
-
-	:param dataset:
-	:param labels:
-	:param centroids:
-	:return:
+	Calculates the Sum of squared error
+	:param dataset: (ndarray) Dataset being clustered
+	:param labels: (ndarray) List assigning each element to a cluster
+	:param centroids: ndarray of centroids
+	:return: (float) error
 	"""
 	distance = np.zeros(dataset.shape[0])
 	for i in range(dataset.shape[0]):
@@ -60,11 +59,12 @@ def calcError(dataset, labels, centroids):
 
 def k_means(dataset, k, maxit=300):
 	"""
-
-	:param dataset:
-	:param k:
-	:param maxit:
-	:return:
+	Clusters the dataset into k clusters
+	:param dataset: (ndarray) Dataset being clustered
+	:param k: (int) The number of clusters required
+	:param maxit: (int) Maximum number of iterations to cluster
+	:return: (ndarray, ndarray, float) labels of which cluster each element in the dataset belongs to, the centroids of
+		the dataset, the sum of squared error
 	"""
 	centroids = dataset[np.random.permutation(dataset.shape[0])[:k]]
 	for i in range(maxit):
@@ -75,6 +75,7 @@ def k_means(dataset, k, maxit=300):
 		if np.all(centroids == prevCentroids):
 			print(i)
 			return labels, centroids, error
+	return labels, centroids, error
 
 
 if __name__ == "__main__":
@@ -83,13 +84,14 @@ if __name__ == "__main__":
 	testSet = [digits.data[i] for i in range(len(digits.images)) if i % 6 == 0]
 	plt.gray()
 	labels, centroids, error = k_means(digits.data, 10)
+	print(type(error))
 	for i in range(10):
 		plt.matshow(centroids[i].reshape((8, 8)))
 		plt.show()
 
-	# wcss = []
+	# sse = []
 	# for i in range(1, 16):
 	# 	labels, centroids, error = k_means(digits.data, i)
-	# 	wcss.append(error)
-	# plt.plot(range(1, 16), wcss)
+	# 	sse.append(error)
+	# plt.plot(range(1, 16), sse)
 	# plt.show()
