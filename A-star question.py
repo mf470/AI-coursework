@@ -1,3 +1,4 @@
+import math
 from copy import deepcopy
 import timeit
 
@@ -96,8 +97,8 @@ def inversions(state):
 	for row in state:
 		list += row
 	list.remove(0)
-	for i in range(len(list)-1):
-		for j in range(i+1, len(list)):
+	for i in range(len(list) - 1):
+		for j in range(i + 1, len(list)):
 			if list[i] > list[j]:
 				inversions += 1
 	return inversions
@@ -135,22 +136,82 @@ def aStar(start, goal, heuristic):
 
 if __name__ == "__main__":
 	start = [[7, 2, 4],
-			 [5, 0, 6],
-			 [8, 3, 1]]
+	         [5, 0, 6],
+	         [8, 3, 1]]
 	goal = [[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8]]
+	        [3, 4, 5],
+	        [6, 7, 8]]
 
-	path = aStar(start, goal, manhattan)
+	# Allow user to input their own start and goal configurations
+	while True:
+		inp = input("Would you like to use the default start and goal states? Type Y or N\n")
+		if inp.lower() == "y":
+			break
+		elif inp.lower() == "n":
+			while True:
+				print("Enter the start configuration separated by commas. For example 7,2,4,5,0,6,8,3,1 for a desired board of:")
+				for row in start:
+					print(row)
+				inp = input()
+				user_start = inp.split(',')
+				for i in range(len(user_start)):
+					user_start[i] = int(user_start[i])
+				if 0 not in user_start:
+					print("There must be a 0 in the configuration")
+					continue
+				n = math.sqrt(len(user_start))
+				if n % 1 != 0:
+					print("The entries must fill a square grid")
+					continue
+				n = int(n)
+				start = [user_start[n*i:(i+1)*n] for i in range(n)]
+				break
 
+			while True:
+				print("Enter the goal configuration separated by commas. For example 0,1,2,3,4,5,6,7,8 for a desired board of:")
+				for row in goal:
+					print(row)
+				inp = input()
+				user_goal = inp.split(',')
+				ng = math.sqrt(len(user_goal))
+				if n != ng:
+					print("There must be the same number of entries as for the start configuration")
+					continue
+				for i in range(len(user_goal)):
+					user_goal[i] = int(user_goal[i])
+				goal = [user_goal[n*i:(i+1)*n] for i in range(n)]
+				if sorted(user_start) != sorted(user_goal):
+					print("start and end states must contain the same values")
+					continue
+				break
+			else:
+				continue
+			break
+
+	while True:
+		inp = input("Enter h to use Hamming distance as the heuristic, m to use Manhattan distance or Q to quit\n")
+
+		if inp.lower() == 'h':
+			heuristic = hamming
+			break
+
+		elif inp.lower() == 'm':
+			heuristic = manhattan
+			break
+
+		elif inp.lower() == 'q':
+			exit(0)
+
+	path = aStar(start, goal, heuristic)
 	if path == -1:
 		print("This configuration is not solvable")
+
 	else:
 		for node in path:
 			for row in node:
 				print(row)
 			print()
-		print("Number of moves needed:", len(path)-1)
+		print("Number of moves needed:", len(path) - 1)
 
 	'''Find the average run time of A* for both heuristic functions'''
 	# manhattanTime = timeit.timeit('aStar(start, goal, manhattan)', globals=globals(), number=10)/10
