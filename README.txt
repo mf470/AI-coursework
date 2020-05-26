@@ -12,4 +12,4 @@ and finding the average accuracy are in the file but commented out by default.
 The code used when analysing the pokemon dataset in question 2.4 is in the file
 'Pokemon question.py'. This needs the pokemon.csv file in the same directory 
 for it to work. The analysis carried out on the data is in the pokemon.xlsx
-excel file
+excel document.
